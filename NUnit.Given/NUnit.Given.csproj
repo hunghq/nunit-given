@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="ContextualTest.cs" />
     <Compile Include="GivenAttribute.cs" />
-    <Compile Include="GivenCaseAttribute.cs" />
     <Compile Include="GivenTestContext.cs" />
     <Compile Include="GivenTestContextReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

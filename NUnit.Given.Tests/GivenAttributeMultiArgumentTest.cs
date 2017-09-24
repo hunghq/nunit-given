@@ -32,12 +32,12 @@ namespace NUnit.Given.Tests
             switch (_testCount)
             {
                 case 1:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_ShouldCreateTwoTestCases) + " [one,one more]"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_ShouldCreateTwoTestCases) + "() [one,one more]"));
                     Assert.That(Context.Value, Is.EqualTo("one"));
                     Assert.That(Context.MoreValue, Is.EqualTo("one more"));
                     break;
                 case 2:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_ShouldCreateTwoTestCases) + " [two,two more]"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_ShouldCreateTwoTestCases) + "() [two,two more]"));
                     Assert.That(Context.Value, Is.EqualTo("two"));
                     Assert.That(Context.MoreValue, Is.EqualTo("two more"));
                     break;

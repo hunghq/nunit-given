@@ -9,7 +9,7 @@ namespace NUnit.Given
     {
         public object[] CurrentParameters { get; protected set; }
 
-        public string CurrentParameterssAsString => CurrentParameters == null ? "" : string.Join(",", CurrentParameters?.Select(x => x.ToString()));
+        public string CurrentParametersAsString => CurrentParameters == null ? "" : string.Join(",", CurrentParameters?.Select(x => x.ToString()));
 
         public virtual IEnumerable<object[]> GetParameters()
         {
@@ -30,13 +30,20 @@ namespace NUnit.Given
             if (!type.IsSubclassOf(typeof(GivenTestContext)))
                 throw new ArgumentException($"ContextType {type.Name} must extend GivenTestContext.");
 
-            var context = arguments != null && arguments.Any()
-                ? Reflect.Construct(type, arguments)
-                : Reflect.Construct(type);
+            try
+            {
+                var context = arguments != null && arguments.Any()
+                    ? Reflect.Construct(type, arguments)
+                    : Reflect.Construct(type);
 
-            var given = (GivenTestContext) context;
-            given.CurrentParameters = arguments;
-            return given;
+                var given = (GivenTestContext) context;
+                given.CurrentParameters = arguments;
+                return given;
+            }
+            catch (Exception e)
+            {
+                return new ErrorTestContext(type, arguments, e.InnerException ?? e);
+            }
         }
     }
 }

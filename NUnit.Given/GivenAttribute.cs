@@ -56,6 +56,7 @@ namespace NUnit.Given
                 {
                     var testMethodPerGivenContext = Builder.BuildTestMethod(testMethod.Method, suite,
                         new TestCaseParameters(testMethod.Arguments));
+
                     SetTestContext(testMethodPerGivenContext, given);
                     yield return testMethodPerGivenContext;
                 }
@@ -65,8 +66,12 @@ namespace NUnit.Given
         private void SetTestContext(TestMethod testMethod, GivenTestContext context)
         {
             testMethod.Properties.Set(ContextualTest.ContextKey, context);
-            var args = context.CurrentParameterssAsString;
+            var args = context.CurrentParametersAsString;
             testMethod.Name += string.IsNullOrEmpty(args) ? "" : $" [{args}]";
+
+            var errorContext = context as ErrorTestContext;
+            if (errorContext != null)
+                MarkTestAsExplicit(testMethod, errorContext);
         }
 
         private void SetContextType(Type contextType)
@@ -75,6 +80,18 @@ namespace NUnit.Given
                 throw new ArgumentException($"ContextType {contextType.Name} must extend GivenTestContext.");
 
             ContextType = contextType;
+        }
+
+        private static void MarkTestAsExplicit(TestMethod testMethod, ErrorTestContext errorContext)
+        {
+            var arguments = errorContext.Arguments == null ? "" : "arguments = " + string.Join(",", errorContext.Arguments?.Select(x => x.ToString()));
+
+            var explicitAttribute = new ExplicitAttribute(
+                $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}({arguments})."
+                + Environment.NewLine
+                + errorContext.Exception);
+
+            explicitAttribute.ApplyToTest(testMethod);
         }
     }
 }

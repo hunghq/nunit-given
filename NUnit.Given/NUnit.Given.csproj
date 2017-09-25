@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextualTest.cs" />
+    <Compile Include="ErrorTestContext.cs" />
     <Compile Include="GivenAttribute.cs" />
     <Compile Include="GivenTestContext.cs" />
     <Compile Include="GivenTestContextReader.cs" />

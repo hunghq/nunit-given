@@ -23,8 +23,8 @@ namespace NUnit.Given.Tests.Given
 
             public override IEnumerable<object[]> GetParameters()
             {
-                yield return new[] { "one", "one more" };
-                yield return new[] { "two", "two more" };
+                yield return new object[] { "one", "one more" };
+                yield return new object[] { "two", "two more" };
             }
         }
     }

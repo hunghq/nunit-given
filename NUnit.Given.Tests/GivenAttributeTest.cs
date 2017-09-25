@@ -1,14 +1,16 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using NUnit.Given.Tests.Given;
 
 namespace NUnit.Given.Tests
 {
     public class GivenAttributeTest : ContextualTest<GivenObject>
     {
-        private static int _testCount1;
-        private static int _testCount2;
-        private static int _testCount3;
-        private static int _testCount4;
+        private static int? _testCount1;
+        private static int? _testCount2;
+        private static int? _testCount3;
+        private static int? _testCount4;
+        private static int? _testCount5;
 
         [Given(typeof(GivenObject))]
         public void DefaultConstructor_ShouldBeInitialized()
@@ -27,7 +29,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters))]
         public void WithTwoParameters_ShouldCreateTwoTestCases()
         {
-            _testCount1++;
+            IncrementTestCount(ref _testCount1);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount1)
@@ -46,7 +48,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action1")]
         public void WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases(string action)
         {
-            _testCount2++;
+            IncrementTestCount(ref _testCount2);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount2)
@@ -65,7 +67,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action1", "action1more")]
         public void WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases(string action, string moreAction)
         {
-            _testCount3++;
+            IncrementTestCount(ref _testCount3);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount3)
@@ -85,7 +87,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action2", "action2more")]
         public void DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases(string action, string moreAction)
         {
-            _testCount4++;
+            IncrementTestCount(ref _testCount4);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount4)
@@ -109,13 +111,53 @@ namespace NUnit.Given.Tests
             }
         }
 
+        [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
+        [Given(typeof(GivenDefectObject))]
+        public void ExceptionInDefaultConstructor_ShouldMakeTestIgnored()
+        {
+            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
+            Assert.NotNull(errorContext);
+            Assert.NotNull(errorContext.Exception);
+            Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context."));
+            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject)));
+            
+            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
+        }
+
+        [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
+        [Given(typeof(GivenDefectObject.DefectWithTwoParameters))]
+        public void ExceptionInConstructorWithTwoParameters_ShouldMakeTwoTestsIgnored()
+        {
+            IncrementTestCount(ref _testCount5);
+            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
+            Assert.NotNull(errorContext);
+            Assert.NotNull(errorContext.Exception);
+            Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context with value: " + errorContext.Arguments.FirstOrDefault()));
+            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject.DefectWithTwoParameters)));
+            
+            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
+        }
+
         [OneTimeTearDown]
         public void CheckTotalTestCounts()
         {
-            Assert.That(_testCount1, Is.EqualTo(2));
-            Assert.That(_testCount2, Is.EqualTo(2));
-            Assert.That(_testCount3, Is.EqualTo(2));
-            Assert.That(_testCount4, Is.EqualTo(4));
+            AssertTestCount(_testCount1, 2);
+            AssertTestCount(_testCount2, 2);
+            AssertTestCount(_testCount3, 2);
+            AssertTestCount(_testCount4, 4);
+            AssertTestCount(_testCount5, 2);
+        }
+
+        private static void IncrementTestCount(ref int? testCount)
+        {
+            if (testCount == null) testCount = 0;
+            testCount += 1;
+        }
+
+        private static void AssertTestCount(int? testCount, int expected)
+        {
+            if(testCount.HasValue)
+                Assert.That(testCount, Is.EqualTo(expected));
         }
     }
 }

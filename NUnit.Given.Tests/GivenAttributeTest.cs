@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using NUnit.Given.Tests.Given;
+using NUnit.Given.Tests.Given.Defect;
 
 namespace NUnit.Given.Tests
 {
@@ -54,12 +55,14 @@ namespace NUnit.Given.Tests
             switch (_testCount2)
             {
                 case 1:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases) + "(\"action1\") [one]"));
+                    Assert.That(action, Is.EqualTo("action1"));
                     Assert.That(Context.Value, Is.EqualTo("one"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases) + "(\"action1\") [one]"));                    
                     break;
                 case 2:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases) + "(\"action1\") [two]"));
+                    Assert.That(action, Is.EqualTo("action1"));
                     Assert.That(Context.Value, Is.EqualTo("two"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases) + "(\"action1\") [two]"));                    
                     break;
             }
         }
@@ -73,12 +76,16 @@ namespace NUnit.Given.Tests
             switch (_testCount3)
             {
                 case 1:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases) + "(\"action1\",\"action1more\") [one]"));
+                    Assert.That(action, Is.EqualTo("action1"));
+                    Assert.That(moreAction, Is.EqualTo("action1more"));
                     Assert.That(Context.Value, Is.EqualTo("one"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases) + "(\"action1\",\"action1more\") [one]"));
                     break;
                 case 2:
-                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases) + "(\"action1\",\"action1more\") [two]"));
+                    Assert.That(action, Is.EqualTo("action1"));
+                    Assert.That(moreAction, Is.EqualTo("action1more"));
                     Assert.That(Context.Value, Is.EqualTo("two"));
+                    Assert.That(testname, Is.EqualTo(nameof(WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases) + "(\"action1\",\"action1more\") [two]"));
                     break;
             }
         }
@@ -93,20 +100,28 @@ namespace NUnit.Given.Tests
             switch (_testCount4)
             {
                 case 1:
-                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action1\",\"action1more\") [one]"));
+                    Assert.That(action, Is.EqualTo("action1"));
+                    Assert.That(moreAction, Is.EqualTo("action1more"));
                     Assert.That(Context.Value, Is.EqualTo("one"));
+                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action1\",\"action1more\") [one]"));
                     break;
                 case 2:
-                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action1\",\"action1more\") [two]"));
+                    Assert.That(action, Is.EqualTo("action1"));
+                    Assert.That(moreAction, Is.EqualTo("action1more"));
                     Assert.That(Context.Value, Is.EqualTo("two"));
+                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action1\",\"action1more\") [two]"));
                     break;
                 case 3:
-                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action2\",\"action2more\") [one]"));
+                    Assert.That(action, Is.EqualTo("action2"));
+                    Assert.That(moreAction, Is.EqualTo("action2more"));
                     Assert.That(Context.Value, Is.EqualTo("one"));
+                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action2\",\"action2more\") [one]"));
                     break;
                 case 4:
-                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action2\",\"action2more\") [two]"));
+                    Assert.That(action, Is.EqualTo("action2"));
+                    Assert.That(moreAction, Is.EqualTo("action2more"));
                     Assert.That(Context.Value, Is.EqualTo("two"));
+                    Assert.That(testname, Is.EqualTo(nameof(DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases) + "(\"action2\",\"action2more\") [two]"));
                     break;
             }
         }
@@ -120,12 +135,12 @@ namespace NUnit.Given.Tests
             Assert.NotNull(errorContext.Exception);
             Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context."));
             Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject)));
-            
+
             Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
         }
 
         [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
-        [Given(typeof(GivenDefectObject.DefectWithTwoParameters))]
+        [Given(typeof(GivenDefectObject.WithTwoParameters))]
         public void ExceptionInConstructorWithTwoParameters_ShouldMakeTwoTestsIgnored()
         {
             IncrementTestCount(ref _testCount5);
@@ -133,8 +148,8 @@ namespace NUnit.Given.Tests
             Assert.NotNull(errorContext);
             Assert.NotNull(errorContext.Exception);
             Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context with value: " + errorContext.Arguments.FirstOrDefault()));
-            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject.DefectWithTwoParameters)));
-            
+            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject.WithTwoParameters)));
+
             Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
         }
 
@@ -156,7 +171,7 @@ namespace NUnit.Given.Tests
 
         private static void AssertTestCount(int? testCount, int expected)
         {
-            if(testCount.HasValue)
+            if (testCount.HasValue)
                 Assert.That(testCount, Is.EqualTo(expected));
         }
     }

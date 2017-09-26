@@ -63,7 +63,7 @@ namespace NUnit.Given
             }
         }
 
-        private void SetTestContext(TestMethod testMethod, GivenTestContext context)
+        private static void SetTestContext(TestMethod testMethod, GivenTestContext context)
         {
             testMethod.Properties.Set(ContextualTest.ContextKey, context);
             var args = context.CurrentParametersAsString;

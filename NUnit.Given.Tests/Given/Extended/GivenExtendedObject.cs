@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NUnit.Given.Tests.Given
+namespace NUnit.Given.Tests.Given.Extended
 {
     public class GivenExtendedObject : GivenObject
     {

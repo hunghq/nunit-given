@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using NUnit.Given.Tests.Given;
+using NUnit.Given.Tests.Given.Extended;
 
 namespace NUnit.Given.Tests
 {

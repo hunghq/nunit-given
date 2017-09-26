@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NUnit.Given.Tests.Given
+namespace NUnit.Given.Tests.Given.Defect
 {
     public class GivenDefectObject : GivenObject
     {
@@ -15,14 +15,14 @@ namespace NUnit.Given.Tests.Given
             
         }
 
-        public class DefectWithTwoParameters : GivenDefectObject
+        public new class WithTwoParameters : GivenDefectObject
         {
-            public DefectWithTwoParameters() : base("one")
+            public WithTwoParameters() : base("one")
             {
                 
             }
 
-            public DefectWithTwoParameters(string value) : base(value)
+            public WithTwoParameters(string value) : base(value)
             {
                 throw new InvalidOperationException("Something is wrong when setting up this test context with value: " + value);
             }

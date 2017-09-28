@@ -49,6 +49,8 @@
     <Compile Include="GivenAttribute.cs" />
     <Compile Include="GivenTestContext.cs" />
     <Compile Include="GivenTestContextReader.cs" />
+    <Compile Include="GivenTestFixtureAttribute.cs" />
+    <Compile Include="IHasContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

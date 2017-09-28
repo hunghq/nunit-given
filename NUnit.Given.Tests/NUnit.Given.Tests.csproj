@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="GivenAttributeMultiArgumentTest.cs" />
     <Compile Include="GivenAttributeTest.cs" />
+    <Compile Include="GivenTestFixtureAttributeTest.cs" />
     <Compile Include="Given\Defect\GivenDefectObject.cs" />
     <Compile Include="Given\Extended\GivenExtendedObject.cs" />
     <Compile Include="Given\GivenObject.cs" />

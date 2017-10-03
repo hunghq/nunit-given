@@ -4,7 +4,7 @@ using NUnit.Framework.Internal;
 
 namespace NUnit.Given
 {
-    public abstract class ContextualTest<T> : ContextualTest where T : GivenTestContext
+    public abstract class ContextualTest<T> : ContextualTest where T : GivenTestContext, new()
     {
         protected T Context => GetContext();
 
@@ -25,15 +25,15 @@ namespace NUnit.Given
     {
         public const string ContextKey = "test_context";
 
-        public static IEnumerable<T> GetAll<T>() where T : GivenTestContext
+        public static IEnumerable<T> GetAll<T>() where T : GivenTestContext, new()
         {
-            var givenContext = (T) Reflect.Construct(typeof(T), null);
+            var givenContext = new T();
             return givenContext.Parameterize() as IEnumerable<T>;
         }
 
-        public static T GetDefault<T>() where T : GivenTestContext
+        public static T GetDefault<T>() where T : GivenTestContext, new()
         {
-            return Reflect.Construct(typeof(T), null) as T;
+            return new T();
         }
     }
 }

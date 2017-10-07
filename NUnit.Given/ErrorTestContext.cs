@@ -2,7 +2,7 @@ using System;
 
 namespace NUnit.Given
 {
-    public class ErrorTestContext : GivenTestContext
+    public class ErrorTestContext : AbstractGivenTestContext
     {
         public Type ContextType { get; }
         public object[] Arguments { get; }

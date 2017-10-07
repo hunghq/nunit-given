@@ -5,7 +5,19 @@ using NUnit.Framework.Internal;
 
 namespace NUnit.Given
 {
-    public abstract class GivenTestContext
+    public class GivenTestContext : AbstractGivenTestContext
+    {
+        public override IEnumerable<AbstractGivenTestContext> Parameterize()
+        {
+            if (GetParameters().Any())
+                foreach (var contextArguments in GetParameters())
+                    yield return From(GetType(), contextArguments);
+            else
+                yield return this;
+        }
+    }
+
+    public abstract class AbstractGivenTestContext
     {
         public object[] CurrentParameters { get; protected set; }
 
@@ -16,18 +28,14 @@ namespace NUnit.Given
             return Enumerable.Empty<object[]>();
         }
 
-        public virtual IEnumerable<GivenTestContext> Parameterize()
+        public virtual IEnumerable<AbstractGivenTestContext> Parameterize()
         {
-            if (GetParameters().Any())
-                foreach (var contextArguments in GetParameters())
-                    yield return From(GetType(), contextArguments);
-            else
-                yield return this;
+            yield return this;
         }
 
-        public static GivenTestContext From(Type type, object[] arguments)
+        public static AbstractGivenTestContext From(Type type, object[] arguments)
         {
-            if (!type.IsSubclassOf(typeof(GivenTestContext)))
+            if (!type.IsSubclassOf(typeof(AbstractGivenTestContext)))
                 throw new ArgumentException($"ContextType {type.Name} must extend GivenTestContext.");
 
             try
@@ -36,7 +44,7 @@ namespace NUnit.Given
                     ? Reflect.Construct(type, arguments)
                     : Reflect.Construct(type);
 
-                var given = (GivenTestContext) context;
+                var given = (AbstractGivenTestContext) context;
                 given.CurrentParameters = arguments;
                 return given;
             }

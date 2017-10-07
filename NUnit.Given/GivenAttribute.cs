@@ -43,7 +43,7 @@ namespace NUnit.Given
 
         private IEnumerable<TestMethod> GetTestMethodsWithContext(TestMethod testMethod, Test suite)
         {
-            var context = GivenTestContext.From(ContextType, null);
+            var context = AbstractGivenTestContext.From(ContextType, null);
             var givens = context.Parameterize().ToList();
             if (givens.Count == 1)
             {
@@ -63,7 +63,15 @@ namespace NUnit.Given
             }
         }
 
-        private static void SetTestContext(TestMethod testMethod, GivenTestContext context)
+        private void SetContextType(Type contextType)
+        {
+            if (!contextType.IsSubclassOf(typeof(GivenTestContext)))
+                throw new ArgumentException($"ContextType {contextType.Name} must extend GivenTestContext.");
+
+            ContextType = contextType;
+        }
+
+        private static void SetTestContext(TestMethod testMethod, AbstractGivenTestContext context)
         {
             testMethod.Properties.Set(ContextualTest.ContextKey, context);
             var args = context.CurrentParametersAsString;
@@ -72,14 +80,6 @@ namespace NUnit.Given
             var errorContext = context as ErrorTestContext;
             if (errorContext != null)
                 MarkTestAsExplicit(testMethod, errorContext);
-        }
-
-        private void SetContextType(Type contextType)
-        {
-            if (!contextType.IsSubclassOf(typeof(GivenTestContext)))
-                throw new ArgumentException($"ContextType {contextType.Name} must extend GivenTestContext.");
-
-            ContextType = contextType;
         }
 
         private static void MarkTestAsExplicit(TestMethod testMethod, ErrorTestContext errorContext)

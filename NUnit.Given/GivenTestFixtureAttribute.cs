@@ -1,40 +1,71 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using NUnit.Framework.Internal;
-using System;
-using System.Collections.Generic;
 
 namespace NUnit.Given
 {
-    public class GivenTestFixtureAttribute : TestFixtureAttribute, IFixtureBuilder
+    public class GivenTestFixtureAttribute : TestFixtureAttribute, ITestAction
     {
-        public GivenTestFixtureAttribute(Type contextType) : base()
+        public GivenTestFixtureAttribute(Type contextType) : this(contextType, null)
         {
-            ContextType = contextType;
         }
 
         public GivenTestFixtureAttribute(Type contextType, params object[] arguments) : base(arguments)
         {
             ContextType = contextType;
+            Properties.Set(GivenTestFixtureAttributeHash, GetAttributeHash());
         }
 
         public Type ContextType { get; }
+        private static readonly string GivenTestFixtureAttributeHash = nameof(GivenTestFixtureAttributeHash);
 
-        public override object TypeId => base.TypeId;
-
-        public override bool IsDefaultAttribute()
+        public void BeforeTest(ITest test)
         {
-            return base.IsDefaultAttribute();
+            var fixtureHash = test.Properties.Get(GivenTestFixtureAttributeHash);
+            if (fixtureHash != null && GetAttributeHash().Equals(fixtureHash))
+            {
+                var testContext = AbstractGivenTestContext.From(ContextType, null);
+                test.Properties.Set(ContextualTest.ContextKey, testContext);
+                InjectTestContext(test, testContext);
+            }
         }
 
-        public override bool Match(object obj)
+        private void InjectTestContext(ITest test, AbstractGivenTestContext testContext)
         {
-            return base.Match(obj);
+            var fixture = test.Fixture as IHasContext<GivenTestContext>;
+            if (fixture == null)
+                throw new ArgumentException($"Fixture {test.Fixture.GetType()} must implement IHasContext<{ContextType.Name}>");
+
+            var contextSetter = fixture.GetType().GetProperty(nameof(fixture.Context),
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty);
+
+            if (contextSetter == null || !contextSetter.CanWrite)
+                throw new ArgumentException($"Fixture {test.Fixture.GetType().FullName} must have a setter for its Context.");
+
+            contextSetter.SetValue(fixture, testContext);
         }
 
-        public new IEnumerable<TestSuite> BuildFrom(ITypeInfo type)
+        public void AfterTest(ITest test)
         {
-            return base.BuildFrom(type);
+            //Do nothing
+        }
+
+        public virtual ActionTargets Targets => ActionTargets.Default;
+
+        private int GetAttributeHash()
+        {
+            return ContextType.GetHashCode() + GetHashCode(Arguments);
+        }
+
+        private static int GetHashCode(object[] array)
+        {
+            if (array == null) return 0;
+            unchecked
+            {
+                return array.Aggregate(17, (current, item) => current * 23 + (item != null ? item.GetHashCode() : 0));
+            }
         }
     }
 }

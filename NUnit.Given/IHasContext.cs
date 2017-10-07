@@ -1,7 +1,7 @@
 ﻿namespace NUnit.Given
 {
-    public interface IHasContext<T> where T : GivenTestContext
+    public interface IHasContext<out T> where T : AbstractGivenTestContext, new()
     {
-        T Context { get; set; }
+        T Context { get; }
     }
 }

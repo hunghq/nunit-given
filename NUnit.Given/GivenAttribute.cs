@@ -79,19 +79,19 @@ namespace NUnit.Given
 
             var errorContext = context as ErrorTestContext;
             if (errorContext != null)
-                MarkTestAsExplicit(testMethod, errorContext);
+                IgnoreTest(testMethod, errorContext);
         }
 
-        private static void MarkTestAsExplicit(TestMethod testMethod, ErrorTestContext errorContext)
+        private static void IgnoreTest(TestMethod testMethod, ErrorTestContext errorContext)
         {
             var arguments = errorContext.Arguments == null ? "" : "arguments = " + string.Join(",", errorContext.Arguments?.Select(x => x.ToString()));
 
-            var explicitAttribute = new ExplicitAttribute(
+            var ignoreAttribute = new IgnoreAttribute(
                 $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}({arguments})."
                 + Environment.NewLine
                 + errorContext.Exception);
 
-            explicitAttribute.ApplyToTest(testMethod);
+            ignoreAttribute.ApplyToTest(testMethod);
         }
     }
 }

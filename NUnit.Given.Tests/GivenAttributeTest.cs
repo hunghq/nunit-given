@@ -131,12 +131,7 @@ namespace NUnit.Given.Tests
         public void ExceptionInDefaultConstructor_ShouldMakeTestIgnored()
         {
             var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
-            Assert.NotNull(errorContext);
-            Assert.NotNull(errorContext.Exception);
-            Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context."));
-            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject)));
-
-            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
+            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
         }
 
         [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
@@ -145,12 +140,7 @@ namespace NUnit.Given.Tests
         {
             IncrementTestCount(ref _testCount5);
             var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
-            Assert.NotNull(errorContext);
-            Assert.NotNull(errorContext.Exception);
-            Assert.That(errorContext.Exception.Message, Does.Contain("Something is wrong when setting up this test context with value: " + errorContext.Arguments.FirstOrDefault()));
-            Assert.That(errorContext.ContextType, Is.EqualTo(typeof(GivenDefectObject.WithTwoParameters)));
-
-            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext.Exception);
+            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
         }
 
         [OneTimeTearDown]

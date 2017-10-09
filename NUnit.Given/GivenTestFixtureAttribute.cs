@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
 
 namespace NUnit.Given
 {
@@ -26,25 +28,51 @@ namespace NUnit.Given
             var fixtureHash = test.Properties.Get(GivenTestFixtureAttributeHash);
             if (fixtureHash != null && GetAttributeHash().Equals(fixtureHash))
             {
-                var testContext = AbstractGivenTestContext.From(ContextType, null);
-                test.Properties.Set(ContextualTest.ContextKey, testContext);
-                InjectTestContext(test, testContext);
+                var fixture = test.Fixture as IHasContext<GivenTestContext>;
+                if (fixture == null)
+                    throw new ArgumentException($"Fixture {test.Fixture.GetType()} must implement IHasContext<{ContextType.Name}>");
+
+                var contextSetter = fixture.GetType().GetProperty(nameof(fixture.Context),
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty);
+
+                if (contextSetter == null || !contextSetter.CanWrite)
+                    throw new ArgumentException($"Fixture {test.Fixture.GetType().FullName} must have a setter for its Context.");
+
+                InjectTestContext(test, contextSetter);
             }
         }
 
-        private void InjectTestContext(ITest test, AbstractGivenTestContext testContext)
+        private void InjectTestContext(ITest test, PropertyInfo contextSetter)
         {
-            var fixture = test.Fixture as IHasContext<GivenTestContext>;
-            if (fixture == null)
-                throw new ArgumentException($"Fixture {test.Fixture.GetType()} must implement IHasContext<{ContextType.Name}>");
+            var testContext = AbstractGivenTestContext.From(ContextType, null);
+            test.Properties.Set(ContextualTest.ContextKey, testContext);
 
-            var contextSetter = fixture.GetType().GetProperty(nameof(fixture.Context),
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty);
+            if (HandleErrorTestContext(test, testContext)) return;
 
-            if (contextSetter == null || !contextSetter.CanWrite)
-                throw new ArgumentException($"Fixture {test.Fixture.GetType().FullName} must have a setter for its Context.");
+            contextSetter.SetValue(test.Fixture, testContext);
+        }
 
-            contextSetter.SetValue(fixture, testContext);
+        private static bool HandleErrorTestContext(ITest test, AbstractGivenTestContext testContext)
+        {
+            var errorContext = testContext as ErrorTestContext;
+            if (errorContext == null) return false;
+            
+            IgnoreTest((Test)test, errorContext);
+            foreach (var testCase in test.Tests)
+            {
+                IgnoreTest((Test)testCase, errorContext);
+            }
+            return true;
+        }
+
+        private static void IgnoreTest(Test test, ErrorTestContext errorContext)
+        {
+            var ignoreAttribute = new IgnoreAttribute(
+                $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}."
+                + Environment.NewLine
+                + errorContext.Exception);
+
+            ignoreAttribute.ApplyToTest(test);
         }
 
         public void AfterTest(ITest test)

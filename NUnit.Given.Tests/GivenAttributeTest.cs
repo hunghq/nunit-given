@@ -23,7 +23,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters))]
         public void WithTwoParameters_ShouldCreateTwoTestCases()
         {
-            IncrementTestCount(ref _testCount1);
+            TestUtil.IncrementTestCount(ref _testCount1);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount1)
@@ -42,7 +42,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action1")]
         public void WithTwoParameters_AndOneMethodArgument_ShouldCreateTwoTestCases(string action)
         {
-            IncrementTestCount(ref _testCount2);
+            TestUtil.IncrementTestCount(ref _testCount2);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount2)
@@ -63,7 +63,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action1", "action1more")]
         public void WithTwoParameters_AndTwoMethodArguments_ShouldCreateTwoTestCases(string action, string moreAction)
         {
-            IncrementTestCount(ref _testCount3);
+            TestUtil.IncrementTestCount(ref _testCount3);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount3)
@@ -87,7 +87,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject.WithTwoParameters), "action2", "action2more")]
         public void DoubleGivensWithTwoParameters_AndTwoMethodArguments_ShouldCreateFourTestCases(string action, string moreAction)
         {
-            IncrementTestCount(ref _testCount4);
+            TestUtil.IncrementTestCount(ref _testCount4);
             var testname = TestContext.CurrentContext.Test.Name;
 
             switch (_testCount4)
@@ -130,7 +130,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenDefectObject.WithTwoParameters))]
         public void ExceptionInConstructorWithTwoParameters_ShouldReturnContextWithError()
         {
-            IncrementTestCount(ref _testCount5);
+            TestUtil.IncrementTestCount(ref _testCount5);
             var argument = _testCount5 == 1 ? "one" : "two";
             AssertContextWithError(typeof(GivenDefectObject.WithTwoParameters), argument);
         }
@@ -154,23 +154,11 @@ namespace NUnit.Given.Tests
         [OneTimeTearDown]
         public void CheckTotalTestCounts()
         {
-            AssertTestCount(_testCount1, 2);
-            AssertTestCount(_testCount2, 2);
-            AssertTestCount(_testCount3, 2);
-            AssertTestCount(_testCount4, 4);
-            AssertTestCount(_testCount5, 2);
-        }
-
-        private static void IncrementTestCount(ref int? testCount)
-        {
-            if (testCount == null) testCount = 0;
-            testCount += 1;
-        }
-
-        private static void AssertTestCount(int? testCount, int expected)
-        {
-            if (testCount.HasValue)
-                Assert.That(testCount, Is.EqualTo(expected));
+            TestUtil.AssertTestCount(_testCount1, 2);
+            TestUtil.AssertTestCount(_testCount2, 2);
+            TestUtil.AssertTestCount(_testCount3, 2);
+            TestUtil.AssertTestCount(_testCount4, 4);
+            TestUtil.AssertTestCount(_testCount5, 2);
         }
     }
 }

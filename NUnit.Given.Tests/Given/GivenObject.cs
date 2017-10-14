@@ -15,6 +15,8 @@ namespace NUnit.Given.Tests.Given
         }
 
         public string Value { get; }
+
+        public string MutableValue { get; set; }
         
         public class WithTwoParameters : GivenObject
         {

@@ -48,12 +48,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GivenAttributeMultiArgumentTest.cs" />
+    <Compile Include="GivenAttributeParallelTest.cs" />
     <Compile Include="GivenAttributeTest.cs" />
     <Compile Include="GivenTestFixtureAttributeTest.cs" />
     <Compile Include="Given\Defect\GivenDefectObject.cs" />
     <Compile Include="Given\Extended\GivenExtendedObject.cs" />
     <Compile Include="Given\GivenObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NUnit.Given\NUnit.Given.csproj">

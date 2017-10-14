@@ -2,13 +2,13 @@ using System;
 
 namespace NUnit.Given
 {
-    public class ErrorTestContext : IGiven
+    public class ContextWithError
     {
         public Type ContextType { get; }
         public object[] Arguments { get; }
         public Exception Exception { get; }
 
-        public ErrorTestContext(Type contextType, object[] arguments, Exception exception)
+        public ContextWithError(Type contextType, object[] arguments, Exception exception)
         {
             ContextType = contextType;
             Arguments = arguments;

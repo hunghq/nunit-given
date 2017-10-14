@@ -17,11 +17,6 @@ namespace NUnit.Given.Tests.Given.Defect
 
         public new class WithTwoParameters : GivenDefectObject
         {
-            public WithTwoParameters() : base("one")
-            {
-                
-            }
-
             public WithTwoParameters(string value) : base(value)
             {
                 throw new InvalidOperationException("Something is wrong when setting up this test context with value: " + value);

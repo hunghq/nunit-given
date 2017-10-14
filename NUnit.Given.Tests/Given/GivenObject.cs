@@ -2,7 +2,7 @@
 
 namespace NUnit.Given.Tests.Given
 {
-    public class GivenObject : IGiven
+    public class GivenObject
     {
         public GivenObject()
         {
@@ -18,7 +18,6 @@ namespace NUnit.Given.Tests.Given
         
         public class WithTwoParameters : GivenObject
         {
-            public WithTwoParameters() {}
             public WithTwoParameters(string value) : base(value) { }
             
             [GivenCaseSource]

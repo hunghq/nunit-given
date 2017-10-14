@@ -42,7 +42,7 @@ namespace NUnit.Given
             var given = ContextualTest.From(ContextType, parameters?.ToArray());
             context.CurrentTest.Properties.Set(ContextualTest.ContextKey, given);
 
-            var errorContext = given as ErrorTestContext;
+            var errorContext = given as ContextWithError;
             if (errorContext != null)
                 IgnoreTest(context.CurrentTest, errorContext);
         }
@@ -138,9 +138,7 @@ namespace NUnit.Given
         
         private void SetContextType(Type contextType)
         {
-            if(!typeof(IGiven).IsAssignableFrom(contextType))
-                throw new ArgumentException($"ContextType {contextType.Name} must implement IGiven.");
-
+            ContextualTest.Validate(contextType);
             ContextType = contextType;
         }
 
@@ -151,7 +149,7 @@ namespace NUnit.Given
             testMethod.Name += string.IsNullOrEmpty(args) ? "" : $" [{args}]";
         }
 
-        private static void IgnoreTest(Test test, ErrorTestContext errorContext)
+        private static void IgnoreTest(Test test, ContextWithError errorContext)
         {
             var arguments = errorContext.Arguments == null ? "" : "arguments = " + string.Join(",", errorContext.Arguments?.Select(x => x.ToString()));
 

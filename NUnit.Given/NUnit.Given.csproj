@@ -45,10 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextualTest.cs" />
-    <Compile Include="ErrorTestContext.cs" />
+    <Compile Include="ContextWithError.cs" />
     <Compile Include="GivenAttribute.cs" />
     <Compile Include="GivenCaseSourceAttribute.cs" />
-    <Compile Include="IGiven.cs" />
     <Compile Include="GivenTestFixtureAttribute.cs" />
     <Compile Include="IHasContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

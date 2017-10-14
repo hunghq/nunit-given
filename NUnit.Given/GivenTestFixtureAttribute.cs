@@ -15,6 +15,7 @@ namespace NUnit.Given
 
         public GivenTestFixtureAttribute(Type contextType, params object[] arguments) : base(arguments)
         {
+            ContextualTest.Validate(contextType);
             ContextType = contextType;
             Properties.Set(GivenTestFixtureAttributeHash, GetAttributeHash());
         }
@@ -27,7 +28,7 @@ namespace NUnit.Given
             var fixtureHash = test.Properties.Get(GivenTestFixtureAttributeHash);
             if (fixtureHash != null && GetAttributeHash().Equals(fixtureHash))
             {
-                var fixture = test.Fixture as IHasContext<IGiven>;
+                var fixture = test.Fixture as IHasContext<object>;
                 if (fixture == null)
                     throw new ArgumentException($"Fixture {test.Fixture.GetType()} must implement IHasContext<{ContextType.Name}>");
 
@@ -51,9 +52,9 @@ namespace NUnit.Given
             contextSetter.SetValue(test.Fixture, testContext);
         }
 
-        private static bool HandleErrorTestContext(ITest test, IGiven testContext)
+        private static bool HandleErrorTestContext(ITest test, object testContext)
         {
-            var errorContext = testContext as ErrorTestContext;
+            var errorContext = testContext as ContextWithError;
             if (errorContext == null) return false;
             
             IgnoreTest((Test)test, errorContext);
@@ -64,7 +65,7 @@ namespace NUnit.Given
             return true;
         }
 
-        private static void IgnoreTest(Test test, ErrorTestContext errorContext)
+        private static void IgnoreTest(Test test, ContextWithError errorContext)
         {
             var ignoreAttribute = new IgnoreAttribute(
                 $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}."

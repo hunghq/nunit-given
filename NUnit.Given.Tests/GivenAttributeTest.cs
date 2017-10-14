@@ -119,23 +119,23 @@ namespace NUnit.Given.Tests
             }
         }
 
-        [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
+        [Test(Description = "Exception in given object should result in ignored test cases.")]
         [Given(typeof(GivenDefectObject))]
         public void ExceptionInDefaultConstructor_ShouldMakeTestIgnored()
         {
-            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
+            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ContextWithError;
             Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
         }
 
-        [Test(Description = "Exception in given object should result in ignored test cases which can be run explicitly.")]
+        [Test(Description = "Exception in given object should result in ignored test cases.")]
         [Given(typeof(GivenDefectObject.WithTwoParameters))]
         public void ExceptionInConstructorWithTwoParameters_ShouldMakeTwoTestsIgnored()
         {
             IncrementTestCount(ref _testCount5);
-            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ErrorTestContext;
+            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ContextWithError;
             Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
         }
-
+        
         [OneTimeTearDown]
         public void CheckTotalTestCounts()
         {

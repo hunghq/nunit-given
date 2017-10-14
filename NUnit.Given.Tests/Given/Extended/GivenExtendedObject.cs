@@ -18,7 +18,6 @@ namespace NUnit.Given.Tests.Given.Extended
 
         public new class WithTwoParameters : GivenExtendedObject
         {
-            public WithTwoParameters() { }
             public WithTwoParameters(string value, string moreValue) : base(value, moreValue) { }
             
             [GivenCaseSource]

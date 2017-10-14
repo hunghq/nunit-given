@@ -2,7 +2,7 @@
 
 namespace NUnit.Given.Tests.Given
 {
-    public class GivenObject : GivenTestContext
+    public class GivenObject : IGiven
     {
         public GivenObject()
         {

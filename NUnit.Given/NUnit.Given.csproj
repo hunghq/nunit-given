@@ -48,7 +48,7 @@
     <Compile Include="ErrorTestContext.cs" />
     <Compile Include="GivenAttribute.cs" />
     <Compile Include="GivenCaseSourceAttribute.cs" />
-    <Compile Include="GivenTestContext.cs" />
+    <Compile Include="IGiven.cs" />
     <Compile Include="GivenTestFixtureAttribute.cs" />
     <Compile Include="IHasContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

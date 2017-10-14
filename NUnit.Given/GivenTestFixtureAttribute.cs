@@ -27,7 +27,7 @@ namespace NUnit.Given
             var fixtureHash = test.Properties.Get(GivenTestFixtureAttributeHash);
             if (fixtureHash != null && GetAttributeHash().Equals(fixtureHash))
             {
-                var fixture = test.Fixture as IHasContext<GivenTestContext>;
+                var fixture = test.Fixture as IHasContext<IGiven>;
                 if (fixture == null)
                     throw new ArgumentException($"Fixture {test.Fixture.GetType()} must implement IHasContext<{ContextType.Name}>");
 
@@ -43,7 +43,7 @@ namespace NUnit.Given
 
         private void InjectTestContext(ITest test, PropertyInfo contextSetter)
         {
-            var testContext = AbstractGivenTestContext.From(ContextType, null);
+            var testContext = ContextualTest.From(ContextType, null);
             test.Properties.Set(ContextualTest.ContextKey, testContext);
 
             if (HandleErrorTestContext(test, testContext)) return;
@@ -51,7 +51,7 @@ namespace NUnit.Given
             contextSetter.SetValue(test.Fixture, testContext);
         }
 
-        private static bool HandleErrorTestContext(ITest test, AbstractGivenTestContext testContext)
+        private static bool HandleErrorTestContext(ITest test, IGiven testContext)
         {
             var errorContext = testContext as ErrorTestContext;
             if (errorContext == null) return false;

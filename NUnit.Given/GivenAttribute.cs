@@ -39,7 +39,7 @@ namespace NUnit.Given
         public void ApplyToContext(TestExecutionContext context)
         {
             var parameters = context.CurrentTest.Properties.Get(ContextualTest.ContextParametersKey) as List<object>;
-            var given = AbstractGivenTestContext.From(ContextType, parameters?.ToArray());
+            var given = ContextualTest.From(ContextType, parameters?.ToArray());
             context.CurrentTest.Properties.Set(ContextualTest.ContextKey, given);
 
             var errorContext = given as ErrorTestContext;
@@ -138,8 +138,8 @@ namespace NUnit.Given
         
         private void SetContextType(Type contextType)
         {
-            if (!contextType.IsSubclassOf(typeof(GivenTestContext)))
-                throw new ArgumentException($"ContextType {contextType.Name} must extend GivenTestContext.");
+            if(!typeof(IGiven).IsAssignableFrom(contextType))
+                throw new ArgumentException($"ContextType {contextType.Name} must implement IGiven.");
 
             ContextType = contextType;
         }

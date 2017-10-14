@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertHelper.cs" />
     <Compile Include="ContextualTest.cs" />
     <Compile Include="ContextWithError.cs" />
     <Compile Include="GivenAttribute.cs" />

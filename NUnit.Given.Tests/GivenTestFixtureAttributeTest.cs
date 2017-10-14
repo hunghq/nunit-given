@@ -5,7 +5,7 @@ using NUnit.Given.Tests.Given.Defect;
 namespace NUnit.Given.Tests
 {
     [GivenTestFixture(typeof(GivenObject), "action_0")]
-    [GivenTestFixture(typeof(GivenDefectObject), "action_X")]
+    [GivenTestFixture(typeof(GivenDefectObject), "action_X", Explicit = true)]
     public class GivenTestFixtureAttributeTest : IHasContext<GivenObject>
     {
         public GivenObject Context { get; set; }

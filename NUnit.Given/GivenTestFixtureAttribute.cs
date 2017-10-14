@@ -57,22 +57,11 @@ namespace NUnit.Given
             var errorContext = testContext as ContextWithError;
             if (errorContext == null) return false;
             
-            IgnoreTest((Test)test, errorContext);
             foreach (var testCase in test.Tests)
             {
-                IgnoreTest((Test)testCase, errorContext);
+                (testCase as Test)?.MakeInvalid(errorContext.ToString());
             }
             return true;
-        }
-
-        private static void IgnoreTest(Test test, ContextWithError errorContext)
-        {
-            var ignoreAttribute = new IgnoreAttribute(
-                $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}."
-                + Environment.NewLine
-                + errorContext.Exception);
-
-            ignoreAttribute.ApplyToTest(test);
         }
 
         public void AfterTest(ITest test)

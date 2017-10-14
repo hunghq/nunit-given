@@ -11,7 +11,7 @@ namespace NUnit.Given.Tests
         [Given(typeof(GivenObject))]
         public void DifferentContext_ShouldBeInvalid()
         {
-            Assert.Throws<AssertionException>(
+            AssertHelper.ExpectException<AssertionException>(
                 () => {var context = Context;}, 
                 $"Test Context is not valid. Expected: {typeof(GivenExtendedObject).FullName}. Got: {typeof(GivenObject).FullName}");
         }

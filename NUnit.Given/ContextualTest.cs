@@ -14,9 +14,14 @@ namespace NUnit.Given
             var context = TestContext.CurrentContext.Test.Properties.Get(ContextKey);
             Assert.NotNull(context, $"Test Context has not been set! Expected: {typeof(T).FullName}");
 
+            var errorContext = context as ContextWithError;
+            if (errorContext != null)
+            {
+                Assert.Fail(errorContext.ToString());
+            }
+
             var typed = context as T;
-            Assert.NotNull(typed,
-                $"Test Context is not valid. Expected: {typeof(T).FullName}. Got: {context.GetType().FullName}");
+            Assert.NotNull(typed, $"Test Context is not valid. Expected: {typeof(T).FullName}. Got: {context.GetType().FullName}");
 
             return typed;
         }

@@ -38,13 +38,11 @@ namespace NUnit.Given
 
         public void ApplyToContext(TestExecutionContext context)
         {
+            if (context.CurrentTest.IsSuite) return;
+
             var parameters = context.CurrentTest.Properties.Get(ContextualTest.ContextParametersKey) as List<object>;
             var given = ContextualTest.From(ContextType, parameters?.ToArray());
             context.CurrentTest.Properties.Set(ContextualTest.ContextKey, given);
-
-            var errorContext = given as ContextWithError;
-            if (errorContext != null)
-                IgnoreTest(context.CurrentTest, errorContext);
         }
 
         public new IEnumerable<TestMethod> BuildFrom(IMethodInfo method, Test suite)
@@ -147,18 +145,6 @@ namespace NUnit.Given
             testMethod.Properties.Set(ContextualTest.ContextParametersKey, contextParameters);
             var args = contextParameters == null ? "" : string.Join(",", contextParameters.Select(x => x.ToString()));
             testMethod.Name += string.IsNullOrEmpty(args) ? "" : $" [{args}]";
-        }
-
-        private static void IgnoreTest(Test test, ContextWithError errorContext)
-        {
-            var arguments = errorContext.Arguments == null ? "" : "arguments = " + string.Join(",", errorContext.Arguments?.Select(x => x.ToString()));
-
-            var ignoreAttribute = new IgnoreAttribute(
-                $"The test is ignored because there was an error when setting up its test context {errorContext.ContextType.FullName}({arguments})."
-                + Environment.NewLine
-                + errorContext.Exception);
-
-            ignoreAttribute.ApplyToTest(test);
         }
     }
 }

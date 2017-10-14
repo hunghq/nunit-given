@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using NUnit.Framework;
 using NUnit.Given.Tests.Given;
 using NUnit.Given.Tests.Given.Defect;
@@ -119,23 +119,38 @@ namespace NUnit.Given.Tests
             }
         }
 
-        [Test(Description = "Exception in given object should result in ignored test cases.")]
+        [Test(Description = "Exception in given object should result ContextWithError. Accessing Context will fail the test immediately.")]
         [Given(typeof(GivenDefectObject))]
-        public void ExceptionInDefaultConstructor_ShouldMakeTestIgnored()
+        public void ExceptionInDefaultConstructor_ShouldReturnContextWithError()
         {
-            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ContextWithError;
-            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
+            AssertContextWithError(typeof(GivenDefectObject), null);
         }
 
-        [Test(Description = "Exception in given object should result in ignored test cases.")]
+        [Test(Description = "Exception in given object should result ContextWithError. Accessing Context will fail the test immediately.")]
         [Given(typeof(GivenDefectObject.WithTwoParameters))]
-        public void ExceptionInConstructorWithTwoParameters_ShouldMakeTwoTestsIgnored()
+        public void ExceptionInConstructorWithTwoParameters_ShouldReturnContextWithError()
         {
             IncrementTestCount(ref _testCount5);
-            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ContextWithError;
-            Assert.Fail("Test should not be executed because there was exception when setting up the test context: " + errorContext?.Exception);
+            var argument = _testCount5 == 1 ? "one" : "two";
+            AssertContextWithError(typeof(GivenDefectObject.WithTwoParameters), argument);
         }
-        
+
+        private void AssertContextWithError(Type contextType, string arguments)
+        {
+            var errorContext = TestContext.CurrentContext.Test.Properties.Get(ContextKey) as ContextWithError;
+
+            Assert.NotNull(errorContext);
+            Assert.That(errorContext.ContextType, Is.SameAs(contextType));
+            if (arguments != null)
+                arguments = $"arguments = {arguments}";
+
+            AssertHelper.ExpectException<AssertionException>(() =>
+            {
+                var context = Context;
+            }, "The test cannot be run because there was an error when setting up its test context "
+               + $"{contextType.FullName}({arguments}).");
+        }
+
         [OneTimeTearDown]
         public void CheckTotalTestCounts()
         {

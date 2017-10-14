@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 
 namespace NUnit.Given.Tests.Given.Extended
 {
@@ -20,11 +20,12 @@ namespace NUnit.Given.Tests.Given.Extended
         {
             public WithTwoParameters() { }
             public WithTwoParameters(string value, string moreValue) : base(value, moreValue) { }
-
-            public override IEnumerable<object[]> GetParameters()
+            
+            [GivenCaseSource]
+            public static IEnumerable GetParameters()
             {
-                yield return new object[] { "one", "one more" };
-                yield return new object[] { "two", "two more" };
+                yield return new [] { "one", "one more" };
+                yield return new [] { "two", "two more" };
             }
         }
     }

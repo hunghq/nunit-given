@@ -20,13 +20,6 @@ namespace NUnit.Given.Tests
             Assert.That(Context.Value, Is.EqualTo("Default"));
         }
 
-        [Given(typeof(GivenObject.WithOneParameter))]
-        public void WithOneParameter_ShouldAcceptArgument()
-        {
-            Assert.NotNull(Context);
-            Assert.That(Context.Value, Is.EqualTo("one"));
-        }
-
         [Given(typeof(GivenObject.WithTwoParameters))]
         public void WithTwoParameters_ShouldCreateTwoTestCases()
         {

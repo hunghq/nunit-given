@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace NUnit.Given
@@ -23,13 +24,8 @@ namespace NUnit.Given
     public abstract class ContextualTest
     {
         public const string ContextKey = "test_context";
-
-        public static IEnumerable<T> GetAll<T>() where T : GivenTestContext, new()
-        {
-            var givenContext = new T();
-            return givenContext.Parameterize() as IEnumerable<T>;
-        }
-
+        public const string ContextParametersKey = "test_context_parameters";
+        
         public static T GetDefault<T>() where T : GivenTestContext, new()
         {
             return new T();

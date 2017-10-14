@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 
 namespace NUnit.Given.Tests.Given.Defect
 {
@@ -26,11 +26,12 @@ namespace NUnit.Given.Tests.Given.Defect
             {
                 throw new InvalidOperationException("Something is wrong when setting up this test context with value: " + value);
             }
-
-            public override IEnumerable<object[]> GetParameters()
+            
+            [GivenCaseSource]
+            public static IEnumerable GetTestCases()
             {
-                yield return new object[] { "one" };
-                yield return new object[] { "two" };
+                yield return "one";
+                yield return "two";
             }
         }
     }

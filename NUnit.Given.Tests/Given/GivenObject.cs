@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 
 namespace NUnit.Given.Tests.Given
 {
@@ -15,21 +15,17 @@ namespace NUnit.Given.Tests.Given
         }
 
         public string Value { get; }
-
-        public class WithOneParameter : GivenObject
-        {
-            public WithOneParameter() : base ("one") { }
-        }
-
+        
         public class WithTwoParameters : GivenObject
         {
             public WithTwoParameters() {}
             public WithTwoParameters(string value) : base(value) { }
-
-            public override IEnumerable<object[]> GetParameters()
+            
+            [GivenCaseSource]
+            public static IEnumerable GetTestCases()
             {
-                yield return new[] { "one" };
-                yield return new[] { "two" };
+                yield return "one";
+                yield return "two";
             }
         }
     }

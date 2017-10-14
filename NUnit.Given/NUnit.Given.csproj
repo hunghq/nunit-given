@@ -47,6 +47,7 @@
     <Compile Include="ContextualTest.cs" />
     <Compile Include="ErrorTestContext.cs" />
     <Compile Include="GivenAttribute.cs" />
+    <Compile Include="GivenCaseSourceAttribute.cs" />
     <Compile Include="GivenTestContext.cs" />
     <Compile Include="GivenTestFixtureAttribute.cs" />
     <Compile Include="IHasContext.cs" />

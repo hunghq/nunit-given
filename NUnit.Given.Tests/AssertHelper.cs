@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace NUnit.Given
+namespace NUnit.Given.Tests
 {
     public class AssertHelper
     {

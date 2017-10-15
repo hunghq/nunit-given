@@ -87,19 +87,6 @@ namespace NUnit.Given
             return invalidContextParameters;
         }
 
-        private string ValidateCases(List<List<object>> cases)
-        {
-            if (cases.Any())
-            {
-                var firstCase = cases.First();
-                if (ContextType.GetConstructors().All(c => c.GetParameters().Length != firstCase.Count))
-                {
-                    return $"GivenParameterSourceAttribute may not be used as there is no constructor with {firstCase.Count} parameters in {ContextType.FullName}.";
-                }
-            }
-            return null;
-        }
-
         private static List<List<object>> GetCasesFromContext(Type type)
         {
             var result = new List<List<object>>();
@@ -124,7 +111,7 @@ namespace NUnit.Given
                             }
                             else
                             {
-                                result.Add(new List<object> {@case});
+                                result.Add(new List<object> { @case });
                             }
                         }
                     }
@@ -133,18 +120,31 @@ namespace NUnit.Given
 
             return result;
         }
-        
-        private void SetContextType(Type contextType)
-        {
-            ContextualTest.Validate(contextType);
-            ContextType = contextType;
-        }
 
         private static void SetTestContextParameters(TestMethod testMethod, List<object> contextParameters)
         {
             testMethod.Properties.Set(ContextualTest.ContextParametersKey, contextParameters);
             var args = contextParameters == null ? "" : string.Join(",", contextParameters.Select(x => x.ToString()));
             testMethod.Name += string.IsNullOrEmpty(args) ? "" : $" [{args}]";
+        }
+
+        private void SetContextType(Type contextType)
+        {
+            ContextualTest.Validate(contextType);
+            ContextType = contextType;
+        }
+
+        private string ValidateCases(List<List<object>> cases)
+        {
+            if (cases.Any())
+            {
+                var firstCase = cases.First();
+                if (ContextType.GetConstructors().All(c => c.GetParameters().Length != firstCase.Count))
+                {
+                    return $"GivenParameterSourceAttribute may not be used as there is no constructor with {firstCase.Count} parameters in {ContextType.FullName}.";
+                }
+            }
+            return null;
         }
     }
 }

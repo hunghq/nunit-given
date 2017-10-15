@@ -9,10 +9,33 @@ namespace NUnit.Given
     {
         protected T Context => GetContext();
 
+        protected static void Set<TType>(TType obj)
+        {
+            Set(typeof(TType).FullName, obj);
+        }
+
+        protected static void Set<TType>(string key, TType obj)
+        {
+            TestContext.CurrentContext.Test.Properties.Set(key, obj);
+        }
+
+        protected static TType Get<TType>()
+        {
+            return Get<TType>(typeof(TType).FullName);
+        }
+
+        protected static TType Get<TType>(string key)
+        {
+            return (TType)TestContext.CurrentContext.Test.Properties.Get(key);
+        }
+
         private static T GetContext()
         {
             var context = TestContext.CurrentContext.Test.Properties.Get(ContextKey);
-            Assert.NotNull(context, $"Test Context has not been set! Expected: {typeof(T).FullName}");
+            if (context == null)
+            {
+                Assert.Fail($"Test Context has not been set! Expected: {typeof(T).FullName}");
+            }
 
             var errorContext = context as ContextWithError;
             if (errorContext != null)
@@ -21,7 +44,10 @@ namespace NUnit.Given
             }
 
             var typed = context as T;
-            Assert.NotNull(typed, $"Test Context is not valid. Expected: {typeof(T).FullName}. Got: {context.GetType().FullName}");
+            if (typed == null)
+            {
+                Assert.Fail($"Test Context is not valid. Expected: {typeof(T).FullName}. Got: {context.GetType().FullName}");
+            }
 
             return typed;
         }

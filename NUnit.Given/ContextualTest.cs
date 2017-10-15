@@ -9,26 +9,6 @@ namespace NUnit.Given
     {
         protected T Context => GetContext();
 
-        protected static void Set<TType>(TType obj)
-        {
-            Set(typeof(TType).FullName, obj);
-        }
-
-        protected static void Set<TType>(string key, TType obj)
-        {
-            TestContext.CurrentContext.Test.Properties.Set(key, obj);
-        }
-
-        protected static TType Get<TType>()
-        {
-            return Get<TType>(typeof(TType).FullName);
-        }
-
-        protected static TType Get<TType>(string key)
-        {
-            return (TType)TestContext.CurrentContext.Test.Properties.Get(key);
-        }
-
         private static T GetContext()
         {
             var context = TestContext.CurrentContext.Test.Properties.Get(ContextKey);
@@ -77,6 +57,26 @@ namespace NUnit.Given
         {
             if (!contextType.IsClass || contextType.IsAbstract)
                 throw new ArgumentException($"Context Type {contextType.Name} must be a non-abstract class.");
+        }
+
+        protected static void Set<TType>(TType obj)
+        {
+            Set(typeof(TType).FullName, obj);
+        }
+
+        protected static void Set<TType>(string key, TType obj)
+        {
+            TestContext.CurrentContext.Test.Properties.Set(key, obj);
+        }
+
+        protected static TType Get<TType>()
+        {
+            return Get<TType>(typeof(TType).FullName);
+        }
+
+        protected static TType Get<TType>(string key)
+        {
+            return (TType)TestContext.CurrentContext.Test.Properties.Get(key);
         }
     }
 }
